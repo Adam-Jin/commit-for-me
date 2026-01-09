@@ -18,7 +18,7 @@ Describe 'fetch_ai_response'
     
     It 'returns the response from the aichat command'
         Mock aichat
-            echo "$1"
+            cat
         End
 
         When call fetch_ai_response "Test prompt"
