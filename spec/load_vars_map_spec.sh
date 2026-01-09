@@ -1,5 +1,6 @@
 Describe 'load_vars_map'
     Include src/lib/load_vars_map.sh
+    Include src/lib/print_if_not_silent.sh
     Include spec/helpers/load_default_env.sh
     Include spec/helpers/unload_default_env.sh
 
