@@ -1,6 +1,6 @@
 name: cfme
 help: Commit For Me - Generate commit messages for staged files using aichat
-version: 0.1.1
+version: 0.0.2
 
 environment_variables:
   - name: CFME_CONFIG_DIR
@@ -21,6 +21,9 @@ environment_variables:
   - name: CFME_SILENT_MODE
     default: "false"
     help: If set to true, suppresses all non-error output.
+  - name: CFME_MAX_DIFF_KB
+    default: "100"
+    help: Maximum size of git diff in KB to send to AI. Diff will be truncated if exceeded.
   - name: CFME_DEFAULT_PROMPT_FILE_FETCH_URL
     default: https://raw.githubusercontent.com/codevogel/commit-for-me/refs/heads/main/defaults/prompts/conventional-commits/default.md
     help: URL used to fetch the default prompt file if it does not exist locally.
@@ -56,16 +59,22 @@ flags:
     help: Suppresses all non-error output. Also possible through the \$CFME_SILENT_MODE environment variable.
   - long: --print-parsed-prompt
     help: Prints the parsed prompt after replacing template strings with variable values, then exits. Useful for debugging.
+  - long: --max-diff-kb
+    short: -k
+    arg: size
+    help: Maximum size of git diff in KB to send to AI. Overrides CFME_MAX_DIFF_KB env var. Default is 100KB.
 
 examples: |
   Generate, review, and commit using the defaults:
     cfme
-  Ditto, overriding the <__INSTRUCTIONS__> template string: (useful for helping the AI figure out what msg to generate) 
+  Ditto, overriding the <__INSTRUCTIONS__> template string: (useful for helping the AI figure out what msg to generate)
     cfme -i "Fix issue with user login"
   Ditto, overriding the default prompt file:
     cfme -p "./my-custom-prompt.md"
   Ditto, overriding the default variables file:
     cfme -v "./my-custom-variables.yaml"
+  Limit diff size to 50KB (truncates if larger):
+    cfme -k 50
   Generate and review a commit message, but echo it instead of committing:
     cfme -m
   Generate a response to the prompt, then echo the raw response instead of reviewing and committing, suppressing all non-error output:

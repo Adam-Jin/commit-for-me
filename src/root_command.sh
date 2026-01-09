@@ -4,6 +4,12 @@ variables_file_override=${args["--variables-file"]:-}
 flag_print_response=${args[--response]:-}
 flag_print_message=${args[--message]:-}
 flag_print_prompt=${args["--print-parsed-prompt"]:-}
+max_diff_kb_override=${args["--max-diff-kb"]:-}
+
+# CLI flag overrides environment variable
+if [[ -n "$max_diff_kb_override" ]]; then
+  export CFME_MAX_DIFF_KB="$max_diff_kb_override"
+fi
 
 # We check whether there are staged changes to commit, and exit if there are none.
 git_diff="$(git diff --cached)"

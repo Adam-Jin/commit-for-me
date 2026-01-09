@@ -34,7 +34,24 @@ load_vars_map() {
   done
 
   # Add defaults to the map
-  referenced_map["<__GIT_DIFF__>"]="$(git diff --cached)"
+  local git_diff file_count diff_size_bytes diff_size_kb max_diff_kb truncated_note
+  git_diff="$(git diff --cached)"
+  file_count="$(git diff --cached --name-only | wc -l | tr -d ' ')"
+  diff_size_bytes="${#git_diff}"
+  diff_size_kb=$((diff_size_bytes / 1024))
+  max_diff_kb="${CFME_MAX_DIFF_KB:-100}"
+
+  # Log diff stats
+  print_if_not_silent "Staged files: $file_count, Diff size: ${diff_size_kb}KB (max: ${max_diff_kb}KB)"
+
+  # Truncate if exceeds max size
+  if [[ $diff_size_bytes -gt $((max_diff_kb * 1024)) ]]; then
+    truncated_note=$'\n\n[... TRUNCATED: diff exceeded '"${max_diff_kb}KB"' limit, showing first '"${max_diff_kb}KB"' ...]'
+    git_diff="${git_diff:0:$((max_diff_kb * 1024))}${truncated_note}"
+    print_if_not_silent "Warning: Diff truncated to ${max_diff_kb}KB"
+  fi
+
+  referenced_map["<__GIT_DIFF__>"]="$git_diff"
 
   referenced_map["<__RESPONSE_FORMAT_REQUIREMENTS__>"]="$(
     cat <<'EOF'
