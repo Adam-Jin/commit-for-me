@@ -6,6 +6,7 @@ Describe 'load_vars_map'
 
     setup() {
         load_default_env
+        SILENT_RUN=true
     }
 
     teardown() {
